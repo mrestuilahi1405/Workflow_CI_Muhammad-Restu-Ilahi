@@ -25,4 +25,4 @@ jobs:
           MLFLOW_TRACKING_URI: https://dagshub.com/mrestuilahi1405/Eksperimen_SML_Muhammad-Restu-Ilahi.mlflow
         run: |
           # Gunakan --env-manager local karena runner sudah kita siapkan library-nya
-          mlflow run MLProject --experiment-name "CI_Workflow_Muhammad-Restu-Ilahi" --env-manager local
+          mlflow run MLProject --experiment-name "CI_Workflow_Muhammad-Restu-Ilahi" --run-name "CI_Retrain_Run_${{ github.run_number }}" --env-manager local
