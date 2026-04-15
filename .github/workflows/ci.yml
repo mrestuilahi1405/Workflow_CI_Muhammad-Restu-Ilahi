@@ -1,11 +1,4 @@
-name: MLflow Project CI
-
-on: [push]
-
-jobs:
-  run-ml-project:
-    runs-on: ubuntu-latest
-    steps:
+steps:
       - uses: actions/checkout@v3
       
       - name: Set up Python
@@ -13,10 +6,15 @@ jobs:
         with:
           python-version: '3.12.7'
           
-      - name: Install MLflow
-        run: pip install mlflow pandas scikit-learn dagshub
-        
-      - name: Run MLflow Project
+      - name: Install Tools & Dependencies
         run: |
-          # Perintah ini akan mengecek apakah MLProject valid dan bisa jalan
-          mlflow run MLProject --experiment-name "CI_Workflow_Muhammad-Restu-Ilahi" --no-conda
+          # Wajib install virtualenv agar MLflow bisa menggunakannya sebagai manager
+          pip install mlflow pandas scikit-learn dagshub virtualenv
+          
+      - name: Run MLflow Project
+        env:
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          # Menggunakan virtualenv untuk isolasi total (Standard Advanced)
+          mlflow run MLProject --experiment-name "CI_Workflow_Muhammad-Restu-Ilahi" --env-manager virtualenv
