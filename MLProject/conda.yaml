@@ -3,12 +3,12 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - python=3.12.7
+  - python=3.12.7  # JANGAN DIHAPUS, biarkan tetap begini
   - pip
   - pip:
-      - mlflow==2.19.0
+      - mlflow==2.19.0 # Sesuai ketentuan
       - scikit-learn
       - pandas
       - joblib
       - dagshub
-      - matplotlib  # Tambahkan jika ada plotting grafik di modelling.py
+      - matplotlib
