@@ -13,15 +13,15 @@ jobs:
         with:
           python-version: '3.12.7'
           
-      - name: Install Tools & Dependencies
+      - name: Install Tools
         run: |
-          # Wajib install virtualenv agar MLflow bisa menggunakannya sebagai manager
-          pip install mlflow pandas scikit-learn dagshub virtualenv
+          # Kita tambahkan 'uv' sebagai bumbu rahasia agar MLflow tidak crash
+          pip install mlflow pandas scikit-learn dagshub virtualenv uv
           
       - name: Run MLflow Project
         env:
           MLFLOW_TRACKING_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
+          MLFLOW_PYTHON_BIN: python
         run: |
-          # Menggunakan virtualenv untuk isolasi total (Standard Advanced)
           mlflow run MLProject --experiment-name "CI_Workflow_Muhammad-Restu-Ilahi" --env-manager virtualenv
