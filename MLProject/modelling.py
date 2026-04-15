@@ -31,8 +31,6 @@ def train():
         # Jika di lokal, biarkan interaktif seperti biasa
         dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
 
-    mlflow.set_experiment("CI_Workflow_ReTraining")
-
     # 3. Load Data Preprocessing
     # Path disesuaikan: di Kriteria 3, dataset ada di dalam folder MLProject
     data_path = "test_data.csv" # Sesuai struktur folder yang kita bahas
@@ -50,7 +48,7 @@ def train():
     )
 
     # 4. MLflow Logging
-    with mlflow.start_run(run_name="MLProject_CI_Run"):
+    with mlflow.start_run():
         # Log parameter dari argparse
         mlflow.log_param("n_estimators", args.n_estimators)
         mlflow.log_param("max_depth", args.max_depth)
