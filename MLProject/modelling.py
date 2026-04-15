@@ -22,7 +22,15 @@ def train():
     repo_owner = "mrestuilahi1405"
     repo_name = "Eksperimen_SML_Muhammad-Restu-Ilahi"
     
-    dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
+# Cek apakah sedang berjalan di GitHub Actions
+    if os.getenv("GITHUB_ACTIONS") == "true":
+        # Jika di CI, jangan pakai dagshub.init interaktif
+        # Langsung tembak URI Tracking-nya
+        mlflow.set_tracking_uri(f"https://dagshub.com/{repo_owner}/{repo_name}.mlflow")
+    else:
+        # Jika di lokal, biarkan interaktif seperti biasa
+        dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
+
     mlflow.set_experiment("CI_Workflow_ReTraining")
 
     # 3. Load Data Preprocessing
