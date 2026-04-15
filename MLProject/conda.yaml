@@ -11,3 +11,4 @@ dependencies:
       - pandas
       - joblib
       - dagshub
+      - matplotlib  # Tambahkan jika ada plotting grafik di modelling.py

@@ -66,6 +66,9 @@ def train():
 
         # Log Model ke MLflow
         mlflow.sklearn.log_model(model, "model")
+
+        # Log Data ke MLflow
+        mlflow.log_artifact(data_path, "dataset")
         
         # Simpan lokal untuk keperluan build-docker nanti
         joblib.dump(model, "model.pkl")
