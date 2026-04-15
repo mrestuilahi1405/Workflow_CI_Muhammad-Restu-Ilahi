@@ -16,7 +16,7 @@ jobs:
       - name: Install All Dependencies
         run: |
           # Kita instal semua kebutuhan model langsung di runner
-          pip install mlflow==2.19.0 pandas scikit-learn dagshub joblib
+          pip install mlflow==2.19.0 pandas scikit-learn dagshub joblib virtualenv
           
       - name: Run MLflow Project
         env:
