@@ -3,10 +3,10 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - python=3.12.7  # JANGAN DIHAPUS, biarkan tetap begini
+  - python=3.12.7 
   - pip
   - pip:
-      - mlflow==2.19.0 # Sesuai ketentuan
+      - mlflow==2.19.0
       - scikit-learn
       - pandas
       - joblib
