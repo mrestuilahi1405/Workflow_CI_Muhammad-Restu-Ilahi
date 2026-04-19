@@ -8,33 +8,27 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score, accuracy_score
 import os
-import joblib
 
 def train():
-    # 1. Setup Argparse untuk parameter MLProject
+    # 1. Setup Argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--n_estimators", type=int, default=100)
-    parser.add_argument("--max_depth", type=int, default=10)
+    parser.add_argument("--n_estimators", type=int, default=104)
+    parser.add_argument("--max_depth", type=int, default=27)
+    parser.add_argument("--min_samples_split", type=int, default=2)
+    parser.add_argument("--min_samples_leaf", type=int, default=1)
     args = parser.parse_args()
 
-    # 2. Inisialisasi DagsHub (Ganti dengan kredensial Anda)
-    # Gunakan nama repo yang sesuai dengan Kriteria 1/2
+    # 2. Inisialisasi Tracking
     repo_owner = "mrestuilahi1405"
     repo_name = "Eksperimen_SML_Muhammad-Restu-Ilahi"
     
-# Cek apakah sedang berjalan di GitHub Actions
     if os.getenv("GITHUB_ACTIONS") == "true":
-        # Jika di CI, jangan pakai dagshub.init interaktif
-        # Langsung tembak URI Tracking-nya
         mlflow.set_tracking_uri(f"https://dagshub.com/{repo_owner}/{repo_name}.mlflow")
     else:
-        # Jika di lokal, biarkan interaktif seperti biasa
         dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
 
-    # 3. Load Data Preprocessing
-    # Path disesuaikan: di Kriteria 3, dataset ada di dalam folder MLProject
-    data_path = "test_data.csv" # Sesuai struktur folder yang kita bahas
-    
+    # 3. Load Data
+    data_path = "credit_risk_clean.csv" 
     if not os.path.exists(data_path):
         print(f"Error: File {data_path} tidak ditemukan!")
         return
@@ -42,46 +36,37 @@ def train():
     df = pd.read_csv(data_path)
     X = df.drop('loan_status', axis=1)
     y = df['loan_status']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
-
-    # 4. MLflow Logging
+    # 4. MLflow Logging & Registration
     with mlflow.start_run():
-        # Log parameter dari argparse
-        mlflow.log_param("n_estimators", args.n_estimators)
-        mlflow.log_param("max_depth", args.max_depth)
+        mlflow.log_params(vars(args))
 
-        # Training
         model = RandomForestClassifier(
             n_estimators=args.n_estimators, 
             max_depth=args.max_depth, 
+            min_samples_split=args.min_samples_split,
+            min_samples_leaf=args.min_samples_leaf,
             random_state=42
         )
         model.fit(X_train, y_train)
 
-        # Evaluation
         y_pred = model.predict(X_test)
         f1 = f1_score(y_test, y_pred)
         acc = accuracy_score(y_test, y_pred)
-
-        # Log Metrics
+        
         mlflow.log_metric("f1_score", f1)
         mlflow.log_metric("accuracy", acc)
 
-        # Log Model ke MLflow
-        mlflow.sklearn.log_model(model, "model")
-
-        # Log Data ke MLflow
-        mlflow.log_artifact(data_path, "dataset")
+        # PENTING: Daftarkan model ke Registry agar bisa ditarik build-docker
+        mlflow.sklearn.log_model(
+            sk_model=model, 
+            artifact_path="model_credit_risk",
+            registered_model_name="model_credit_risk"
+        )
         
-        # Simpan lokal untuk keperluan build-docker nanti
-        joblib.dump(model, "model.pkl")
-
-        print(f"Training Selesai (MLProject)!")
-        print(f"Params: n_estimators={args.n_estimators}, max_depth={args.max_depth}")
-        print(f"Metrics: F1={f1:.4f}, Accuracy={acc:.4f}")
+        mlflow.log_artifact(data_path, "dataset")
+        print(f"✅ Training & Registration Selesai! F1: {f1:.4f}, Accuracy: {acc:.4f}")
 
 if __name__ == "__main__":
     train()
