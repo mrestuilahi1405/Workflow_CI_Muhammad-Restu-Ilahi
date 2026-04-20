@@ -71,9 +71,10 @@ def train():
 
         if os.path.exists(model_save_path):
             shutil.rmtree(model_save_path) # Hapus jika sudah ada
-            
-        os.makedirs(base_artifacts_path)
 
+        if not os.path.exists(base_artifacts_path):
+            os.makedirs(base_artifacts_path)
+                
         mlflow.sklearn.save_model(
             sk_model=model,
             path=model_save_path
