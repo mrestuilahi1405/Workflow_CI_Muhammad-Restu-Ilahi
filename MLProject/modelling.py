@@ -80,7 +80,7 @@ def train():
             path=model_save_path
         )
 
-        data_save_path = os.path.join(data_path, "dataset")
+        data_save_path = os.path.join("dataset", data_path)
         
         shutil.copy(data_path, os.path.join(base_artifacts_path, data_save_path))
 
