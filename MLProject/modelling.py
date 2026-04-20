@@ -67,7 +67,7 @@ def train():
         )
 
         base_artifacts_path = "../artifacts"
-        model_save_path = os.path.join(base_artifacts_path, "model_package")
+        model_save_path = os.path.join(base_artifacts_path, "model_credit_risk")
 
         if os.path.exists(model_save_path):
             shutil.rmtree(model_save_path) # Hapus jika sudah ada
@@ -78,8 +78,10 @@ def train():
             sk_model=model,
             path=model_save_path
         )
+
+        data_save_path = os.path.join(data_path, "dataset")
         
-        shutil.copy(data_path, os.path.join(base_artifacts_path, data_path))
+        shutil.copy(data_path, os.path.join(base_artifacts_path, data_save_path))
 
         mlflow.log_artifact(data_path, "dataset")
 
