@@ -68,25 +68,25 @@ def train():
 
         base_artifacts_path = "../artifacts"
         model_save_path = os.path.join(base_artifacts_path, "model_credit_risk")
+        dataset_artifacts_path = os.path.join(base_artifacts_path, "dataset")
 
-        if os.path.exists(model_save_path):
-            shutil.rmtree(model_save_path) # Hapus jika sudah ada
+        if os.path.exists(base_artifacts_path):
+            shutil.rmtree(base_artifacts_path)
 
-        if not os.path.exists(base_artifacts_path):
-            os.makedirs(base_artifacts_path)
-                
+        os.makedirs(base_artifacts_path, exist_ok=True)
+
         mlflow.sklearn.save_model(
             sk_model=model,
             path=model_save_path
         )
-
-        data_save_path = os.path.join("dataset", data_path)
         
-        shutil.copy(data_path, os.path.join(base_artifacts_path, data_save_path))
+        shutil.copy(data_path, os.path.join(dataset_artifacts_path, data_path))
 
         mlflow.log_artifact(data_path, "dataset")
 
-        print(f"✅ Paket Lengkap (Model & Data) siap di: {base_artifacts_path}")
+        print(f"✅ Struktur Artefak Berhasil Dibuat!")
+        print(f"📍 Model: {model_save_path}")
+        print(f"📍 Data : {dataset_artifacts_path}")
         print(f"✅ Training & Registration Selesai! F1: {f1:.4f}, Accuracy: {acc:.4f}")
 
 if __name__ == "__main__":
