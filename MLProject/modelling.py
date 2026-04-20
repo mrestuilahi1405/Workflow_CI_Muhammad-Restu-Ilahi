@@ -73,7 +73,7 @@ def train():
         if os.path.exists(base_artifacts_path):
             shutil.rmtree(base_artifacts_path)
 
-        os.makedirs(base_artifacts_path, exist_ok=True)
+        os.makedirs(dataset_artifacts_path, exist_ok=True)
 
         mlflow.sklearn.save_model(
             sk_model=model,
