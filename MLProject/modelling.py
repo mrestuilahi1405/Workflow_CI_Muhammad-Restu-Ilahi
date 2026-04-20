@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score, accuracy_score
 import os
+import shutil
 
 def train():
     # 1. Setup Argparse
@@ -64,8 +65,25 @@ def train():
             artifact_path="model_credit_risk",
             registered_model_name="model_credit_risk"
         )
+
+        base_artifacts_path = "../artifacts"
+        model_save_path = os.path.join(base_artifacts_path, "model_package")
+
+        if os.path.exists(model_save_path):
+            shutil.rmtree(model_save_path) # Hapus jika sudah ada
+            
+        os.makedirs(base_artifacts_path)
+
+        mlflow.sklearn.save_model(
+            sk_model=model,
+            path=model_save_path
+        )
         
+        shutil.copy(data_path, os.path.join(base_artifacts_path, data_path))
+
         mlflow.log_artifact(data_path, "dataset")
+
+        print(f"✅ Paket Lengkap (Model & Data) siap di: {base_artifacts_path}")
         print(f"✅ Training & Registration Selesai! F1: {f1:.4f}, Accuracy: {acc:.4f}")
 
 if __name__ == "__main__":
