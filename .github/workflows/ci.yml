@@ -2,6 +2,9 @@ name: MLflow Project CI
 
 on: [push]
 
+permissions:
+  contents: write
+
 jobs:
   run-ml-project:
     runs-on: ubuntu-latest
@@ -23,7 +26,7 @@ jobs:
           MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
           MLFLOW_TRACKING_URI: https://dagshub.com/mrestuilahi1405/Eksperimen_SML_Muhammad-Restu-Ilahi.mlflow
         run: |
-          mlflow run MLProject --experiment-name "CI_Workflow_Muhammad-Restu-Ilahi_${{ github.run_number }}" --env-manager local
+          mlflow run MLProject --experiment-name "CI_Workflow_Muhammad-Restu-Ilahi" --run-name "CI_Workflow_Muhammad-Restu-Ilahi_Run_v${{ github.run_number }}" --env-manager local
 
       - name: Upload Artifacts to GitHub
         uses: actions/upload-artifact@v4
@@ -31,6 +34,23 @@ jobs:
           name: model-artifacts-run-${{ github.run_number }}
           path: artifacts/
           retention-days: 7
+
+      - name: Commit and Push Artifacts to Repository
+        run: |
+          # Konfigurasi identitas bot GitHub
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Tambahkan folder artifacts ke staging area
+          git add artifacts/
+          
+          # Melakukan commit. 
+          git commit -m "chore: update production artifacts from run ${{ github.run_number }} [skip ci]" || echo "No changes to commit"
+          
+          # Push kembali ke branch main
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token otomatis dari GitHub
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
